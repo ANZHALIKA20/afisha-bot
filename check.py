@@ -125,7 +125,7 @@ def main():
     else:
         for k in new:
             v = target[k]
-                        send(f"🎭 Новая дата: {v['title']}\n"
+            send(f"🎭 Новая дата: {v['title']}\n"
                  f"📅 {v['date']}\n"
                  f"{work_status(v['date'])}\n"
                  f"🎟 Купить: {v['url']}\n\n"
