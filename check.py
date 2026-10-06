@@ -16,7 +16,19 @@ FAILS_BEFORE_ALERT = 6  # сколько проверок подряд могу�
 
 TOKEN = os.environ.get("TG_TOKEN", "")
 CHAT_ID = os.environ.get("TG_CHAT_ID", "")
+# График 2 через 2: 2 рабочих дня, 2 выходных. Отсчёт от 6 октября 2026 (рабочий день).
+SHIFT_START = datetime.date(2026, 10, 6)
 
+
+def work_status(date_str):
+    """'28.11.2026 19:00' -> строка про то, рабочий день или выходной."""
+    try:
+        d = datetime.datetime.strptime(date_str[:10], "%d.%m.%Y").date()
+    except ValueError:
+        return ""
+    if (d - SHIFT_START).days % 4 in (0, 1):
+        return "💼 В этот день у тебя РАБОТА ❌"
+    return "🟢 В этот день у тебя ВЫХОДНОЙ ✅"
 
 def send(text):
     r = requests.post(
@@ -113,8 +125,9 @@ def main():
     else:
         for k in new:
             v = target[k]
-            send(f"🎭 Новая дата: {v['title']}\n"
+                        send(f"🎭 Новая дата: {v['title']}\n"
                  f"📅 {v['date']}\n"
+                 f"{work_status(v['date'])}\n"
                  f"🎟 Купить: {v['url']}\n\n"
                  "Не забудь: в личном кабинете tce.by выставить счёт и применить промокод из любых 5 цифр.")
             print("Отправлено уведомление:", v["date"])
